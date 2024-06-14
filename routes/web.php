@@ -14,5 +14,14 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return response()->json([
+        'app_name' => env('APP_NAME'),
+        'version' => env('APP_VERSION')
+    ], 200);
+});
+
+$router->group(['prefix' => 'admin'], function () use ($router) {
+    $router->group(['prefix' => 'auth', 'namespace' => 'Admin'], function () use ($router) {
+        $router->post('/sign-in', 'AuthController@sign_in');
+    });
 });
