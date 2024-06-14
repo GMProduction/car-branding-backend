@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('account_number')->unique();
             $table->string('bank');
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('car_type_id')->references('id')->on('car_types');
         });

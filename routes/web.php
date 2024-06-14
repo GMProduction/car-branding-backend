@@ -20,8 +20,26 @@ $router->get('/', function () use ($router) {
     ], 200);
 });
 
-$router->group(['prefix' => 'admin'], function () use ($router) {
-    $router->group(['prefix' => 'auth', 'namespace' => 'Admin'], function () use ($router) {
+$router->group(['prefix' => 'admin', 'namespace' => 'Admin'], function () use ($router) {
+    $router->group(['prefix' => 'auth'], function () use ($router) {
+        $router->post('/sign-in', 'AuthController@sign_in');
+    });
+
+    $router->group(['prefix' => 'car-type'], function () use ($router) {
+        $router->get('/', 'CarTypeController@index');
+        $router->post('/', 'CarTypeController@index');
+        $router->get('/{id}', 'CarTypeController@getDataByID');
+    });
+
+    $router->group(['prefix' => 'driver'], function () use ($router) {
+        $router->get('/', 'DriverController@index');
+        $router->post('/', 'DriverController@index');
+        $router->get('/{id}', 'DriverController@getDataByID');
+    });
+});
+
+$router->group(['prefix' => 'driver', 'namespace' => 'Driver'], function () use ($router) {
+    $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->post('/sign-in', 'AuthController@sign_in');
     });
 });

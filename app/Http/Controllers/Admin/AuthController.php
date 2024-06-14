@@ -22,6 +22,7 @@ class AuthController extends CustomController
             $password = $this->postField('password');
             $user = User::with([])
                 ->where('email', '=', $email)
+                ->where('role', '!=', 'driver')
                 ->first();
             if (!$user) {
                 return $this->jsonNotFoundResponse('user account not found!');

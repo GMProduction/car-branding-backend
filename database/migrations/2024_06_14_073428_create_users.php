@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('role');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
