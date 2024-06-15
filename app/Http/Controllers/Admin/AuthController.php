@@ -31,7 +31,7 @@ class AuthController extends CustomController
             if (!$is_password_valid) {
                 return $this->jsonBadRequestResponse('password did not match');
             }
-            $access_token = $this->generateTokenById($user->id, 'superadmin');
+            $access_token = $this->generateTokenById($user->id, 'admin');
             return $this->jsonSuccessResponse('success', [
                 'access_token' => $access_token,
                 'token_type' => 'bearer'

@@ -18,7 +18,12 @@ class Driver extends UuidModel
         'vehicle_id',
         'phone',
         'account_number',
-        'bank'
+        'bank',
+        'is_active'
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean'
     ];
 
     public function user()

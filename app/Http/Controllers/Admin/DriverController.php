@@ -31,6 +31,21 @@ class DriverController extends CustomController
         }
     }
 
+    public function findByID($id)
+    {
+        try {
+            $data = Driver::with(['user', 'car_type'])
+                ->where('id', '=', $id)
+                ->first();
+            if (!$data) {
+                return $this->jsonNotFoundResponse('driver not found');
+            }
+            return $this->jsonSuccessResponse('success', $data);
+        }catch (\Throwable $e) {
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
+
     private function store()
     {
         DB::beginTransaction();

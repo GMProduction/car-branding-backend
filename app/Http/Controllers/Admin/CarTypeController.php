@@ -28,7 +28,7 @@ class CarTypeController extends CustomController
         }
     }
 
-    public function getDataByID($id)
+    public function findByID($id)
     {
         try {
             $data = CarType::with([])
