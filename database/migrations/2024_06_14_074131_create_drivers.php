@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('account_number')->unique();
             $table->string('bank');
-            $table->boolean('is_active')->default(true);
+            $table->boolean('on_broadcast')->default(false);
+            $table->string('broadcast_name')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users');

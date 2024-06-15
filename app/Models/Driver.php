@@ -19,11 +19,12 @@ class Driver extends UuidModel
         'phone',
         'account_number',
         'bank',
-        'is_active'
+        'on_broadcast',
+        'broadcast_name'
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'on_broadcast' => 'boolean'
     ];
 
     public function user()

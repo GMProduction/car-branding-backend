@@ -41,11 +41,48 @@ class DriverController extends CustomController
                 return $this->jsonNotFoundResponse('driver not found');
             }
             return $this->jsonSuccessResponse('success', $data);
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->jsonErrorResponse($e->getMessage());
         }
     }
 
+    public function patchBroadcastStatus($id)
+    {
+        try {
+            $data = Driver::with(['user', 'car_type'])
+                ->where('id', '=', $id)
+                ->first();
+            if (!$data) {
+                return $this->jsonNotFoundResponse('driver not found');
+            }
+            $status = $this->postField('status');
+            $data->update([
+                'on_broadcast' => $status
+            ]);
+            return $this->jsonSuccessResponse('success');
+        } catch (\Throwable $e) {
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
+
+    public function patchBroadcastName($id)
+    {
+        try {
+            $data = Driver::with(['user', 'car_type'])
+                ->where('id', '=', $id)
+                ->first();
+            if (!$data) {
+                return $this->jsonNotFoundResponse('driver not found');
+            }
+            $name = $this->postField('name');
+            $data->update([
+                'broadcast_name' => $name
+            ]);
+            return $this->jsonSuccessResponse('success');
+        } catch (\Throwable $e) {
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
     private function store()
     {
         DB::beginTransaction();
