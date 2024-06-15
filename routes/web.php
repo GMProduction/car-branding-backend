@@ -26,7 +26,7 @@ $router->group(['prefix' => 'admin', 'namespace' => 'Admin'], function () use ($
         $router->post('/sign-in', 'AuthController@sign_in');
     });
 
-    $router->group(['middleware' => ['auth', 'admin']], function () use ($router){
+    $router->group(['middleware' => ['auth', 'admin']], function () use ($router) {
         $router->group(['prefix' => 'car-type'], function () use ($router) {
             $router->get('/', 'CarTypeController@index');
             $router->post('/', 'CarTypeController@index');
@@ -47,5 +47,12 @@ $router->group(['prefix' => 'admin', 'namespace' => 'Admin'], function () use ($
 $router->group(['prefix' => 'driver', 'namespace' => 'Driver'], function () use ($router) {
     $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->post('/sign-in', 'AuthController@sign_in');
+    });
+
+    $router->group(['middleware' => ['auth', 'driver']], function () use ($router){
+
+        $router->group(['prefix' => 'report'], function () use ($router) {
+            $router->post('/', 'ReportController@store');
+        });
     });
 });
