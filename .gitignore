@@ -4,3 +4,7 @@ Homestead.json
 Homestead.yaml
 .env
 .phpunit.result.cache
+storage/reports
+storage/assets
+public/storage
+public/assets

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('broadcast_reports', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->unique();
+            $table->foreignUuid('user_id');
             $table->string('image');
             $table->string('type');
             $table->double('latitude')->nullable();
