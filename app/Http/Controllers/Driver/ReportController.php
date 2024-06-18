@@ -17,7 +17,22 @@ class ReportController extends CustomController
         parent::__construct();
     }
 
-    public function store()
+    public function index()
+    {
+        if ($this->request->method() === 'POST') {
+            return $this->store();
+        }
+        try {
+            $data = BroadcastReport::with([])
+                ->where('user_id', '=', auth()->id())
+                ->orderBy('created_at', 'DESC')
+                ->get();
+            return $this->jsonSuccessResponse('success', $data);
+        }catch (\Throwable $e) {
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
+    private function store()
     {
         try {
             $imagePath = '/assets/reports';
@@ -44,6 +59,7 @@ class ReportController extends CustomController
 
     /**
      * @param UploadedFile $file
+     * @param $imagePath
      * @return string
      */
     private function upload_image($file, $imagePath)

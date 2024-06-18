@@ -52,7 +52,12 @@ $router->group(['prefix' => 'driver', 'namespace' => 'Driver'], function () use 
     $router->group(['middleware' => ['auth', 'driver']], function () use ($router){
 
         $router->group(['prefix' => 'report'], function () use ($router) {
-            $router->post('/', 'ReportController@store');
+            $router->get('/', 'ReportController@index');
+            $router->post('/', 'ReportController@index');
+        });
+
+        $router->group(['prefix' => 'profile'], function () use ($router) {
+            $router->get('/', 'ProfileController@index');
         });
     });
 });
