@@ -19,38 +19,25 @@ class ReportController extends CustomController
 
     public function store()
     {
-        DB::beginTransaction();
         try {
             $imagePath = '/assets/reports';
-            if ($this->request->hasFile('file_speedometer')) {
-                $file = $this->request->file('file_speedometer');
+            $type = $this->postField('type');
+            $latitude = $this->postField('latitude');
+            $longitude = $this->postField('longitude');
+            if ($this->request->hasFile('file')) {
+                $file = $this->request->file('file');
                 $documentName = $this->upload_image($file, $imagePath);
                 $data_request = [
                     'user_id' => auth()->id(),
                     'image' => $documentName,
-                    'type' => 'speedometer',
-                    'latitude' => 0,
-                    'longitude' => 0,
+                    'type' => $type,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
                 ];
                 BroadcastReport::create($data_request);
             }
-
-            if ($this->request->hasFile('file_media')) {
-                $file = $this->request->file('file_media');
-                $documentName = $this->upload_image($file, $imagePath);
-                $data_request = [
-                    'user_id' => auth()->id(),
-                    'image' => $documentName,
-                    'type' => 'media',
-                    'latitude' => 0,
-                    'longitude' => 0,
-                ];
-                BroadcastReport::create($data_request);
-            }
-            DB::commit();
             return $this->jsonSuccessResponse('success');
         } catch (\Throwable $e) {
-            DB::rollBack();
             return $this->jsonErrorResponse($e->getMessage());
         }
     }
