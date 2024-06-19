@@ -28,7 +28,7 @@ class ReportController extends CustomController
                 ->orderBy('created_at', 'DESC')
                 ->get();
             return $this->jsonSuccessResponse('success', $data);
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->jsonErrorResponse($e->getMessage());
         }
     }
@@ -36,12 +36,13 @@ class ReportController extends CustomController
     {
         try {
             $imagePath = '/assets/reports';
+            $imagePathonline = '../../public_html/car.branding/assets/reports';
             $type = $this->postField('type');
             $latitude = $this->postField('latitude');
             $longitude = $this->postField('longitude');
             if ($this->request->hasFile('file')) {
                 $file = $this->request->file('file');
-                $documentName = $this->upload_image($file, $imagePath);
+                $documentName = $this->upload_image($file, $imagePath, $imagePathonline);
                 $data_request = [
                     'user_id' => auth()->id(),
                     'image' => $documentName,
@@ -62,11 +63,11 @@ class ReportController extends CustomController
      * @param $imagePath
      * @return string
      */
-    private function upload_image($file, $imagePath)
+    private function upload_image($file, $imagePath, $imagePathonline)
     {
         $extension = $file->getClientOriginalExtension();
         $document = Uuid::uuid4()->toString() . '.' . $extension;
-        $destinationPath = $this->public_path() . $imagePath;
+        $destinationPath = $this->public_path() . $imagePathonline;
         $documentName = $imagePath . '/' . $document;
         $file->move($destinationPath, $documentName);
         return $documentName;
