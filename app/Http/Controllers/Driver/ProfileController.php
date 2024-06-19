@@ -17,7 +17,7 @@ class ProfileController extends CustomController
     public function index()
     {
         try {
-            $data = Driver::with(['user'])
+            $data = Driver::with(['user', 'car_type'])
                 ->where('user_id', '=', auth()->id())
                 ->first();
             if (!$data) {
