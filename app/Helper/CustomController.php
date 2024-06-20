@@ -7,6 +7,7 @@ namespace App\Helper;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 
@@ -120,13 +121,18 @@ class CustomController extends Controller
         ], 500);
     }
 
-    public function generateTokenById($id, $role)
+    public function generateTokenById($id, $role, $customClaims = [])
     {
+        $claims = [
+            'role' => $role
+        ];
 
+        if (count($customClaims) > 0) {
+           $claims =  array_merge($claims, $customClaims);
+        }
         return auth('api')->setTTL(null)
-            ->claims([
-                'role' => $role,
-            ])->tokenById($id);
+            ->claims($claims)
+            ->tokenById($id);
     }
 
     public function generateToken($credentials, $role)

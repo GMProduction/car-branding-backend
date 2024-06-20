@@ -63,4 +63,9 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
         return $query->with([])
             ->where('role', '=', 'admin');
     }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class, 'user_id');
+    }
 }

@@ -20,7 +20,7 @@ class AuthController extends CustomController
         try {
             $email = $this->postField('email');
             $password = $this->postField('password');
-            $user = User::with([])
+            $user = User::with(['admin'])
                 ->where('email', '=', $email)
                 ->where('role', '!=', 'driver')
                 ->first();
@@ -31,7 +31,13 @@ class AuthController extends CustomController
             if (!$is_password_valid) {
                 return $this->jsonBadRequestResponse('password did not match');
             }
-            $access_token = $this->generateTokenById($user->id, 'admin');
+
+            $name = $user->admin->name;
+            $customClaims = [
+                'email' => $user->email,
+                'name' => $name
+            ];
+            $access_token = $this->generateTokenById($user->id, 'admin', $customClaims);
             return $this->jsonSuccessResponse('success', [
                 'access_token' => $access_token,
                 'token_type' => 'bearer'
