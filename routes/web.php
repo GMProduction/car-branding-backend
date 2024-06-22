@@ -41,6 +41,10 @@ $router->group(['prefix' => 'admin', 'namespace' => 'Admin'], function () use ($
             $router->post('/{id}/status', 'DriverController@patchBroadcastStatus');
             $router->post('/{id}/broadcast', 'DriverController@patchBroadcastName');
         });
+
+        $router->group(['prefix' => 'report'],  function() use ($router){
+            $router->get('/', 'ReportController@index');
+        });
     });
 
 });
