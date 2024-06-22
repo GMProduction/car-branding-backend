@@ -37,6 +37,7 @@ $router->group(['prefix' => 'admin', 'namespace' => 'Admin'], function () use ($
             $router->get('/', 'DriverController@index');
             $router->post('/', 'DriverController@index');
             $router->get('/{id}', 'DriverController@findByID');
+            $router->post('/{id}', 'DriverController@findByID');
             $router->post('/{id}/status', 'DriverController@patchBroadcastStatus');
             $router->post('/{id}/broadcast', 'DriverController@patchBroadcastName');
         });

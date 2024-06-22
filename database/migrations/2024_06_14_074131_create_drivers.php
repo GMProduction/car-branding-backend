@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('drivers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->unique();
-            $table->foreignUuid('car_type_id')->unique();
+            $table->foreignUuid('car_type_id');
             $table->string('name');
             $table->string('vehicle_id')->unique();
             $table->string('phone')->unique();

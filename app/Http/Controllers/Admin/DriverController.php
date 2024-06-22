@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helper\CustomController;
 use App\Models\Driver;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -40,8 +41,58 @@ class DriverController extends CustomController
             if (!$data) {
                 return $this->jsonNotFoundResponse('driver not found');
             }
+            if ($this->request->method() === 'POST') {
+                return $this->patch($data);
+            }
             return $this->jsonSuccessResponse('success', $data);
         } catch (\Throwable $e) {
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
+
+    /**
+     * @param Model $data
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function patch($data)
+    {
+        try {
+            DB::beginTransaction();
+            $email = $this->postField('email');
+            $password = Hash::make($this->postField('password'));
+            $carTypeID = $this->postField('car_type_id');
+            $name = $this->postField('name');
+            $vehicleID = $this->postField('vehicle_id');
+            $phone = $this->postField('phone');
+            $accountNumber = $this->postField('account_number');
+            $bank = $this->postField('bank');
+
+
+            $data_user = [
+                'email' => $email,
+            ];
+
+            if ($password !== '') {
+                $data_user['password'] = $password;
+            }
+            /** @var Model $user */
+            $user = $data->user;
+            $user->update($data_user);
+
+            $data_driver = [
+                'car_type_id' => $carTypeID,
+                'name' => $name,
+                'vehicle_id' => $vehicleID,
+                'phone' => $phone,
+                'account_number' => $accountNumber,
+                'bank' => $bank,
+            ];
+
+            $data->update($data_driver);
+            DB::commit();
+            return $this->jsonSuccessResponse('success');
+        } catch (\Throwable $e) {
+            DB::rollBack();
             return $this->jsonErrorResponse($e->getMessage());
         }
     }
@@ -83,6 +134,7 @@ class DriverController extends CustomController
             return $this->jsonErrorResponse($e->getMessage());
         }
     }
+
     private function store()
     {
         DB::beginTransaction();
