@@ -18,7 +18,7 @@ class ReportController extends CustomController
     {
         try {
 
-            $query = BroadcastReport::with(['user.driver']);
+            $query = BroadcastReport::with(['user.driver.car_type']);
             $dateStart = $this->field('date_start');
             $dateEnd = $this->field('date_end');
             if ($dateStart && $dateEnd) {
