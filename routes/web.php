@@ -38,6 +38,8 @@ $router->group(['prefix' => 'admin', 'namespace' => 'Admin'], function () use ($
             $router->post('/', 'DriverController@index');
             $router->get('/{id}', 'DriverController@findByID');
             $router->post('/{id}', 'DriverController@findByID');
+            $router->post('/{id}/soft-delete', 'DriverController@softDeleteDriver');
+            $router->post('/{id}/restore', 'DriverController@restore');
             $router->post('/{id}/status', 'DriverController@patchBroadcastStatus');
             $router->post('/{id}/broadcast', 'DriverController@patchBroadcastName');
         });

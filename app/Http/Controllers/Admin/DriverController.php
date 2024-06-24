@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helper\CustomController;
 use App\Models\Driver;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +25,17 @@ class DriverController extends CustomController
             return $this->store();
         }
         try {
-            $data = Driver::with(['user', 'car_type'])
-                ->get();
+            $trashed = $this->field('trashed');
+            if ($trashed === 'yes') {
+                $data = Driver::with(['user' => function ($q) {
+                    return $q->withTrashed();
+                }, 'car_type'])
+                    ->onlyTrashed()
+                    ->get();
+            } else {
+                $data = Driver::with(['user', 'car_type'])->get();
+            }
+
             return $this->jsonSuccessResponse('success', $data);
         } catch (\Throwable $e) {
             return $this->jsonErrorResponse($e->getMessage());
@@ -166,6 +176,53 @@ class DriverController extends CustomController
                 'bank' => $bank,
             ];
             Driver::create($data_driver);
+            DB::commit();
+            return $this->jsonSuccessResponse('success');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
+
+    public function softDeleteDriver($id)
+    {
+        try {
+            DB::beginTransaction();
+            $driver = Driver::with([])
+                ->where('id', '=', $id)
+                ->first();
+
+            if (!$driver) {
+                return $this->jsonNotFoundResponse('driver not found...');
+            }
+
+            $userID = $driver->user_id;
+            $driver->delete();
+            User::destroy($userID);
+            DB::commit();
+            return $this->jsonSuccessResponse('success');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            DB::beginTransaction();
+            $driver = Driver::withTrashed()->with(['user' => function ($q) {
+                return $q->withTrashed();
+            }])
+                ->where('id', '=', $id)
+                ->first();
+
+            if (!$driver) {
+                return $this->jsonNotFoundResponse('driver not found...');
+            }
+            $driver->restore();
+            $user = $driver->user;
+            $user->restore();
             DB::commit();
             return $this->jsonSuccessResponse('success');
         } catch (\Throwable $e) {
