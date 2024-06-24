@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Driver;
 
 use App\Helper\CustomController;
 use App\Models\BroadcastReport;
+use App\Models\Driver;
+use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
@@ -40,15 +42,28 @@ class ReportController extends CustomController
             $type = $this->postField('type');
             $latitude = $this->postField('latitude');
             $longitude = $this->postField('longitude');
+
+            $driver = Driver::with([])
+                ->where('user_id', '=', auth()->id())
+                ->first();
+
+            if (!$driver) {
+                return $this->jsonNotFoundResponse('driver not found');
+            }
+
+            $broadcastName = $driver->broadcast_name;
+
             if ($this->request->hasFile('file')) {
                 $file = $this->request->file('file');
                 $documentName = $this->upload_image($file, $imagePath, $imagePathonline);
                 $data_request = [
                     'user_id' => auth()->id(),
+                    'date' => Carbon::now()->format('Y-m-d'),
                     'image' => $documentName,
                     'type' => $type,
                     'latitude' => $latitude,
                     'longitude' => $longitude,
+                    'broadcast_name' => $broadcastName
                 ];
                 BroadcastReport::create($data_request);
             }

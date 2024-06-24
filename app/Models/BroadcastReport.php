@@ -16,7 +16,9 @@ class BroadcastReport extends UuidModel
         'image',
         'type',
         'latitude',
-        'longitude'
+        'longitude',
+        'date',
+        'broadcast_name'
     ];
 
     protected $casts = [
