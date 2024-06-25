@@ -28,8 +28,9 @@ class DriverController extends CustomController
         }
         try {
             $trashed = $this->field('trashed');
-            $page = (int) $this->field('page');
-            $perPage = (int) $this->field('per_page');
+            $name = $this->field('name');
+            $page = (int)$this->field('page');
+            $perPage = (int)$this->field('per_page');
 
             $offset = ($page - 1) * $perPage;
             /** @var Builder $query */
@@ -37,30 +38,32 @@ class DriverController extends CustomController
                 $query = Driver::with(['user' => function ($q) {
                     return $q->withTrashed();
                 }, 'car_type'])
+                    ->where('name', 'LIKE', '%' . $name . '%')
                     ->onlyTrashed();
                 $total_rows = $query->count();
 
-                $data =    $query
+                $data = $query
                     ->offset($offset)
                     ->limit($perPage)
                     ->get();
-                $total_page = ceil($total_rows / (int) $perPage);
+                $total_page = ceil($total_rows / (int)$perPage);
             } else {
-                $query = Driver::with(['user', 'car_type']);
+                $query = Driver::with(['user', 'car_type'])
+                    ->where('name', 'LIKE', '%' . $name . '%');
 
                 $total_rows = $query->count();
-                $data =    $query
+                $data = $query
                     ->offset($offset)
                     ->limit($perPage)
                     ->get();
-                $total_page = ceil($total_rows / ((int) $perPage));
+                $total_page = ceil($total_rows / ((int)$perPage));
             }
 
             $meta = [
                 'total_rows' => $total_rows,
                 'total_page' => $total_page,
-                'page' => (int) $page,
-                'per_page' => (int) $perPage
+                'page' => (int)$page,
+                'per_page' => (int)$perPage
             ];
             return $this->jsonSuccessResponse('success', $data, $meta);
         } catch (\Throwable $e) {
@@ -263,7 +266,22 @@ class DriverController extends CustomController
             $code = date('YmdHis');
             $name = 'driver_' . $code . '.xlsx';
             return Excel::download(new DriverExport(), $name);
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
+
+    public function reportByDriver($id)
+    {
+        try {
+            $data = Driver::with(['user.reports', 'car_type'])
+                ->where('id', '=', $id)
+                ->first();
+            if (!$data) {
+                return $this->jsonNotFoundResponse('driver not found');
+            }
+            return $this->jsonSuccessResponse('success', $data);
+        } catch (\Throwable $e) {
             return $this->jsonErrorResponse($e->getMessage());
         }
     }

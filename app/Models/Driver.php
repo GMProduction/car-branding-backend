@@ -37,4 +37,5 @@ class Driver extends UuidModel
         return $this->belongsTo(CarType::class,'car_type_id');
     }
 
+
 }

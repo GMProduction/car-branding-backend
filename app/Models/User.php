@@ -73,4 +73,9 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
     {
         return $this->hasOne(Driver::class, 'user_id');
     }
+
+    public function reports()
+    {
+        return $this->hasMany(BroadcastReport::class, 'user_id');
+    }
 }
