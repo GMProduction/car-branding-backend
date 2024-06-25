@@ -48,11 +48,12 @@ class CustomController extends Controller
         ], $status);
     }
 
-    public function jsonSuccessResponse($msg = '', $data = null)
+    public function jsonSuccessResponse($msg = '', $data = null, $meta = null)
     {
         return response()->json([
             'status' => 200,
             'message' => $msg,
+            'meta' => $meta,
             'data' => $data
         ], 200);
     }

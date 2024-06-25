@@ -28,17 +28,41 @@ class DriverController extends CustomController
         }
         try {
             $trashed = $this->field('trashed');
+            $page = (int) $this->field('page');
+            $perPage = (int) $this->field('per_page');
+
+            $offset = ($page - 1) * $perPage;
+            /** @var Builder $query */
             if ($trashed === 'yes') {
-                $data = Driver::with(['user' => function ($q) {
+                $query = Driver::with(['user' => function ($q) {
                     return $q->withTrashed();
                 }, 'car_type'])
-                    ->onlyTrashed()
+                    ->onlyTrashed();
+                $total_rows = $query->count();
+
+                $data =    $query
+                    ->offset($offset)
+                    ->limit($perPage)
                     ->get();
+                $total_page = ceil($total_rows / (int) $perPage);
             } else {
-                $data = Driver::with(['user', 'car_type'])->get();
+                $query = Driver::with(['user', 'car_type']);
+
+                $total_rows = $query->count();
+                $data =    $query
+                    ->offset($offset)
+                    ->limit($perPage)
+                    ->get();
+                $total_page = ceil($total_rows / ((int) $perPage));
             }
 
-            return $this->jsonSuccessResponse('success', $data);
+            $meta = [
+                'total_rows' => $total_rows,
+                'total_page' => $total_page,
+                'page' => (int) $page,
+                'per_page' => (int) $perPage
+            ];
+            return $this->jsonSuccessResponse('success', $data, $meta);
         } catch (\Throwable $e) {
             return $this->jsonErrorResponse($e->getMessage());
         }
