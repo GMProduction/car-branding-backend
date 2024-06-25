@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Admin;
 
 
+use App\Exports\DriverExport;
 use App\Helper\CustomController;
 use App\Models\Driver;
 use App\Models\User;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DriverController extends CustomController
 {
@@ -227,6 +229,17 @@ class DriverController extends CustomController
             return $this->jsonSuccessResponse('success');
         } catch (\Throwable $e) {
             DB::rollBack();
+            return $this->jsonErrorResponse($e->getMessage());
+        }
+    }
+
+    public function exportToExcel()
+    {
+        try {
+            $code = date('YmdHis');
+            $name = 'driver_' . $code . '.xlsx';
+            return Excel::download(new DriverExport(), $name);
+        }catch (\Throwable $e) {
             return $this->jsonErrorResponse($e->getMessage());
         }
     }

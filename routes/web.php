@@ -42,6 +42,7 @@ $router->group(['prefix' => 'admin', 'namespace' => 'Admin'], function () use ($
             $router->post('/{id}/restore', 'DriverController@restore');
             $router->post('/{id}/status', 'DriverController@patchBroadcastStatus');
             $router->post('/{id}/broadcast', 'DriverController@patchBroadcastName');
+            $router->get('/export/excel', 'DriverController@exportToExcel');
         });
 
         $router->group(['prefix' => 'report'],  function() use ($router){
